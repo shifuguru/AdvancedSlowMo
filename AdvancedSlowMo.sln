@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedSlowMo", "AdvancedSlowMo.csproj", "{6F09F33D-4657-4D56-8801-E773D4CE5BAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F09F33D-4657-4D56-8801-E773D4CE5BAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F09F33D-4657-4D56-8801-E773D4CE5BAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F09F33D-4657-4D56-8801-E773D4CE5BAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F09F33D-4657-4D56-8801-E773D4CE5BAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A80329C9-B8A5-4F93-9F4D-81002B4DCC14}
+	EndGlobalSection
+EndGlobal
