@@ -15,10 +15,10 @@ namespace AdvancedSlowMo
         int delay;
         int i;
         float mod;
-        bool onExp = true;
+        bool onExp = false;
         bool onCollision = false;
         bool onPedCollision = true;
-        bool onPedRagdoll = false;
+        bool onPedRagdoll = true;
         public Main()
         {
             Tick += onTick;
@@ -69,10 +69,11 @@ namespace AdvancedSlowMo
             {
                 if (onExp)
                 {
-                    if (Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, -1, player.Position.X, player.Position.Y, player.Position.Z, 50f))
-                        if(!Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 19 , player.Position.X, player.Position.Y, player.Position.Z, 50f) && !Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 20, player.Position.X, player.Position.Y, player.Position.Z, 50f) && !Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 21, player.Position.X, player.Position.Y, player.Position.Z, 50f) && !Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 22, player.Position.X, player.Position.Y, player.Position.Z, 50f) && !Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 35, player.Position.X, player.Position.Y, player.Position.Z, 50f))
+                    if (Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, -1, player.Position.X, player.Position.Y, player.Position.Z, 10f))
+                        if(!Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 19 , player.Position.X, player.Position.Y, player.Position.Z, 10f) && !Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 20, player.Position.X, player.Position.Y, player.Position.Z, 10f) && !Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 21, player.Position.X, player.Position.Y, player.Position.Z, 10f) && !Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 22, player.Position.X, player.Position.Y, player.Position.Z, 10f) && !Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 35, player.Position.X, player.Position.Y, player.Position.Z, 10f))
                         {
-                        slowMo();
+                            GTA.UI.Screen.ShowHelpText("EXPLOSION");
+                            slowMo();
                         }
                 }
                 if (onCollision)
@@ -80,11 +81,11 @@ namespace AdvancedSlowMo
                     if (player.IsInVehicle())
                     {
                         Vehicle car = player.CurrentVehicle;
-                        GTA.UI.Screen.ShowHelpText("CAR SPEED" + car.Speed, 1000, false, false);
                         if (car.Speed > 25)
                         {
                             if (car.HasCollided)
                             {
+                                GTA.UI.Screen.ShowHelpText("COLLISION PLAYER");
                                 slowMo();
                             }
                         }
@@ -92,29 +93,37 @@ namespace AdvancedSlowMo
                 }
                 if (onPedCollision)
                 {
-                    var pedVehs = World.GetNearbyVehicles(player, 25f).Where(v => v.Speed > 10).ToList();
+                    var pedVehs = World.GetNearbyVehicles(player, 25f).Where(v => v.Speed > 10 && v.HasCollided).ToList();
                     foreach(Vehicle v in pedVehs)
                     {
-                        if(!player.IsInVehicle() && v.HasCollided)
+                        if (Function.Call<bool>(Hash.IS_ENTITY_ON_SCREEN, v))
                         {
-                            slowMo();
-                        }
-                        else
-                        {
-                            if (v.HasCollided && player.IsInVehicle() && v.IsTouching(player.CurrentVehicle))
+                            if (!player.IsInVehicle())
                             {
-
+                                GTA.UI.Screen.ShowHelpText("PED COLLISION");
                                 slowMo();
                             }
+                            else
+                            {
+                                if (player.IsInVehicle() && !v.IsTouching(player.CurrentVehicle))
+                                {
+                                    GTA.UI.Screen.ShowHelpText("PED COLLISION");
+                                    slowMo();
+                                }
+                            }
                         }
+                       
                     }
                 }
                 if (onPedRagdoll)
                 {
                     var peds = World.GetNearbyPeds(player, 15f).Where(p => p.IsRagdoll).ToList();
-                    
+                    foreach(Ped ped in peds)
                     {
-                        slowMo();
+                        if (Function.Call<bool>(Hash.IS_ENTITY_ON_SCREEN, ped) && !ped.IsDead)
+                        {
+                            slowMo();
+                        }
                     }
                 }
             
