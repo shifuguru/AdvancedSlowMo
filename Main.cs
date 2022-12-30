@@ -127,7 +127,7 @@ namespace AdvancedSlowMo
                 }
                 if (onPedRagdoll)
                 {
-                    var peds = World.GetNearbyPeds(player, 100f).Where(p => p.IsJumping || p.IsInAir || p.IsRagdoll).ToList();
+                    var peds = World.GetNearbyPeds(player, 100f).Where(p => p.IsJumping || p.IsInAir || p.IsRagdoll && !p.IsOnFire).ToList();
                     foreach(Ped ped in peds)
                     {
                         if (Function.Call<bool>(Hash.IS_ENTITY_ON_SCREEN, ped) && !ped.IsDead)
