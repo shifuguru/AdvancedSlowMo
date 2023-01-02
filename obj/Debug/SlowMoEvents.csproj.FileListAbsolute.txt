@@ -1,0 +1,9 @@
+D:\Visual Studio\Repos\AdvancedSlowMo\bin\Debug\SlowMoEvents.dll
+D:\Visual Studio\Repos\AdvancedSlowMo\bin\Debug\SlowMoEvents.pdb
+D:\Visual Studio\Repos\AdvancedSlowMo\bin\Debug\ScriptHookVDotNet3.dll
+D:\Visual Studio\Repos\AdvancedSlowMo\bin\Debug\ScriptHookVDotNet3.xml
+D:\Visual Studio\Repos\AdvancedSlowMo\obj\Debug\SlowMoEvents.csproj.AssemblyReference.cache
+D:\Visual Studio\Repos\AdvancedSlowMo\obj\Debug\SlowMoEvents.csproj.CoreCompileInputs.cache
+D:\Visual Studio\Repos\AdvancedSlowMo\obj\Debug\SlowMoEvents.csproj.CopyComplete
+D:\Visual Studio\Repos\AdvancedSlowMo\obj\Debug\SlowMoEvents.dll
+D:\Visual Studio\Repos\AdvancedSlowMo\obj\Debug\SlowMoEvents.pdb

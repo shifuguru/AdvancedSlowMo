@@ -7,8 +7,8 @@
     <ProjectGuid>{6F09F33D-4657-4D56-8801-E773D4CE5BAE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AdvancedSlowMo</RootNamespace>
-    <AssemblyName>AdvancedSlowMo</AssemblyName>
+    <RootNamespace>SlowMoEvents</RootNamespace>
+    <AssemblyName>SlowMoEvents</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
