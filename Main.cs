@@ -11,80 +11,96 @@ namespace SlowMoEvents
 {
     public class Main : Script
     {
-        int time;
-        int newTime;
-        int delay;
-        int i;
-        float mod;
+        static int currentTime;
+        static int newTime;
+        static int delay;
+        static float gameSpeed;
+        static float mod;
         bool onExp;
         bool onCollision;
         bool onPedCollision;
         bool onPedRagdoll;
-        bool onOff;
-        int coolDown;
-        Keys tog;
+        public static bool _switch;
+        static int coolDown;
+        public static Keys tog;
+        public static Keys tog1;
+        static int length;
+        static float transition;
         public Main()
         {
             loadSettings();
             Tick += onTick;
-            KeyDown += onKeyDown;
-        }
-        void onKeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == tog)
-            {
-                onOff = !onOff;
-                if (onOff)
-                {
-                    GTA.UI.Screen.ShowHelpText("Slow Mo events detector enabled", 1000, true, false);
-                }
-                else if (!onOff)
-                {
-                    GTA.UI.Screen.ShowHelpText("Slow Mo events detector disabled", 1000, true, false);
-                }
-                
-            }
         }
         void loadSettings()
         {
             coolDown = Settings.GetValue<int>("SETTINGS", "coolDown", 5000);
-            onOff = Settings.GetValue<bool>("SETTINGS", "activeByDefault", true);
-            tog = Settings.GetValue<Keys>("SETTINGS", "toggle", Keys.Insert);
-            onExp = Settings.GetValue<bool>("SETTINGS", "onExp", false);
-            onCollision = Settings.GetValue<bool>("SETTINGS", "onCollision", false);
-            onPedCollision = Settings.GetValue<bool>("SETTINGS", "onPedCollision", true);
-            onPedRagdoll = Settings.GetValue<bool>("SETTINGS", "onPedRagdoll", true);
-        }
-        void slowMo()
-        {
-            i = 1;
-            mod = 1.0f;
-            while (i <= 10)
+            length = Settings.GetValue<int>("SETTINGS", "length", 110);
+            gameSpeed = Settings.GetValue<float>("SETTINGS", "gameSpeed", 0.1f);
+            if (gameSpeed > 0.9f || gameSpeed < 0.1f)
             {
-                mod = 1.0f / i;
+                gameSpeed = 0.1f;
+            }
+            _switch = Settings.GetValue<bool>("SETTINGS", "activeByDefault", true);
+            tog = Settings.GetValue<Keys>("SETTINGS", "toggle", Keys.Insert);
+            tog1 = Settings.GetValue<Keys>("SETTINGS", "instantToggle", Keys.T);
+            onExp = Settings.GetValue<bool>("TRIGGERS", "onExp", false);
+            onCollision = Settings.GetValue<bool>("TRIGGERS", "onCollision", false);
+            onPedCollision = Settings.GetValue<bool>("TRIGGERS", "onPedCollision", true);
+            onPedRagdoll = Settings.GetValue<bool>("TRIGGERS", "onPedRagdoll", true);
+            transition = Settings.GetValue<float>("SETTINGS", "transition", 0.02f);
+        }
+        public static void slowMo()
+        {
+            mod = 1.0f;
+            while (mod >= gameSpeed)
+            {
+                mod += -transition;
+                if(mod < gameSpeed)
+                {
+                    mod = gameSpeed;
+                    Game.TimeScale = mod;
+                    break;
+                }
                 Game.TimeScale = mod;
                 //GTA.UI.Screen.ShowSubtitle("mod " + mod, 2000);
-                i++;
                 Wait(10);
             }
-            time = Game.GameTime;
-            wait(time);
+            //GTA.UI.Screen.ShowSubtitle("MAX SLOW");
+            currentTime = Game.GameTime;
+            _wait(currentTime);
         }
-        void wait(int time)
+        public static void regularMo()
+        {
+            mod = gameSpeed;
+            while (mod < 1.0f)
+            {
+                mod += transition;
+                if (mod > 1.0f)
+                {
+                    mod = 1.0f;
+                    Game.TimeScale = mod;
+                    break;
+                }
+                Game.TimeScale = mod;
+               // GTA.UI.Screen.ShowSubtitle("mod " + mod, 2000);
+                Wait(10);
+            }
+           // GTA.UI.Screen.ShowSubtitle("REG SPEED");
+        }
+       static void _wait(int time)
         {
             delay = 0;
-            while(delay <= 110)
+            while (delay <= length)
             {
                 newTime = Game.GameTime;
                 delay = newTime - time;
-                
-                if (delay >= 110)
+
+                if (delay >= length)
                 {
-                    Game.TimeScale = 1.0f;
-                    delay = 110;
+                    regularMo();
                 }
                 Wait(1);
-                while (delay < coolDown && delay >= 110)
+                while (delay < coolDown && delay >= length)
                 {
                     newTime = Game.GameTime;
                     delay = newTime - time;
@@ -96,7 +112,7 @@ namespace SlowMoEvents
        
         void onTick(object sender, EventArgs e)
         {
-            if (onOff)
+            if (_switch)
             {
                 Ped player = Game.Player.Character;
                 if (Game.TimeScale == 1.0f)
