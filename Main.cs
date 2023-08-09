@@ -49,7 +49,7 @@ namespace SlowMoEvents
             onPedRagdoll = Settings.GetValue<bool>("TRIGGERS", "onPedRagdoll", true);
             transition = Settings.GetValue<float>("SETTINGS", "transition", 0.02f);
         }
-        public static void slowMo()
+        public static void slowMo(bool instant)
         {
             mod = 1.0f;
             while (mod >= gameSpeed)
@@ -66,8 +66,16 @@ namespace SlowMoEvents
                 Wait(10);
             }
             //GTA.UI.Screen.ShowSubtitle("MAX SLOW");
-            currentTime = Game.GameTime;
-            _wait(currentTime);
+            if (instant)
+            {
+                currentTime = Game.GameTime;
+                _wait(currentTime, true);
+            }
+            if (!instant)
+            {
+                currentTime = Game.GameTime;
+                _wait(currentTime, false);
+            }
         }
         public static void regularMo()
         {
@@ -87,25 +95,27 @@ namespace SlowMoEvents
             }
            // GTA.UI.Screen.ShowSubtitle("REG SPEED");
         }
-       static void _wait(int time)
+       static void _wait(int time, bool instant)
         {
             delay = 0;
             while (delay <= length)
             {
                 newTime = Game.GameTime;
                 delay = newTime - time;
-
                 if (delay >= length)
                 {
                     regularMo();
                 }
                 Wait(1);
-                while (delay < coolDown && delay >= length)
+                if (!instant)
                 {
-                    newTime = Game.GameTime;
-                    delay = newTime - time;
-                    //GTA.UI.Screen.ShowSubtitle("Cooldown " + delay, 2000);
-                    Wait(1);
+                    while (delay < coolDown && delay >= length)
+                    {
+                        newTime = Game.GameTime;
+                        delay = newTime - time;
+                        GTA.UI.Screen.ShowSubtitle("Cooldown " + delay, 2000);
+                        Wait(1);
+                    }
                 }
             }
         }
@@ -124,7 +134,7 @@ namespace SlowMoEvents
                             {
                                 {
                                     //GTA.UI.Screen.ShowHelpText("EXPLOSION");
-                                    slowMo();
+                                    slowMo(false);
                                 }
                             }
                     }
@@ -138,7 +148,7 @@ namespace SlowMoEvents
                                 if (car.HasCollided)
                                 {
                                     //GTA.UI.Screen.ShowHelpText("COLLISION PLAYER");
-                                    slowMo();
+                                    slowMo(false);
                                 }
                             }
                         }
@@ -153,14 +163,14 @@ namespace SlowMoEvents
                                 if (!player.IsInVehicle())
                                 {
                                     //GTA.UI.Screen.ShowHelpText("PED COLLISION");
-                                    slowMo();
+                                    slowMo(false);
                                 }
                                 else
                                 {
                                     if (player.IsInVehicle() && !v.IsTouching(player.CurrentVehicle))
                                     {
                                        // GTA.UI.Screen.ShowHelpText("PED COLLISION");
-                                        slowMo();
+                                        slowMo(false);
                                     }
                                 }
                             }
@@ -174,7 +184,7 @@ namespace SlowMoEvents
                             if (Function.Call<bool>(Hash.IS_ENTITY_ON_SCREEN, ped) && !ped.IsDead)
                             {
                                 // GTA.UI.Screen.ShowHelpText("PED RAGDOLL");
-                                slowMo();
+                                slowMo(false);
                             }
                         }
                     }
