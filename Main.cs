@@ -42,7 +42,7 @@ namespace SlowMoEvents
             }
             _switch = Settings.GetValue<bool>("SETTINGS", "activeByDefault", true);
             tog = Settings.GetValue<Keys>("SETTINGS", "toggle", Keys.Insert);
-            tog1 = Settings.GetValue<Keys>("SETTINGS", "instantToggle", Keys.T);
+            tog1 = Settings.GetValue<Keys>("SETTINGS", "instantToggle", Keys.NumPad0);
             onExp = Settings.GetValue<bool>("TRIGGERS", "onExp", false);
             onCollision = Settings.GetValue<bool>("TRIGGERS", "onCollision", false);
             onPedCollision = Settings.GetValue<bool>("TRIGGERS", "onPedCollision", true);
@@ -112,8 +112,7 @@ namespace SlowMoEvents
                     while (delay < coolDown && delay >= length)
                     {
                         newTime = Game.GameTime;
-                        delay = newTime - time;
-                        GTA.UI.Screen.ShowSubtitle("Cooldown " + delay, 2000);
+                        delay = newTime - time;                        
                         Wait(1);
                     }
                 }
