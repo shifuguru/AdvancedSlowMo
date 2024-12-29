@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using GTA;
-using GTA.UI;
 using Screen = GTA.UI.Screen;
 using GTA.Native;
 
@@ -28,12 +25,39 @@ namespace SlowMoEvents
         public static Keys tog1;
         static int length;
         static float transition;
+        private static readonly string LogFilePath = "SlowMoEvents.log";
+
+        private static void LogException(string message, Exception ex)
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(LogFilePath, true))
+                {
+                    writer.WriteLine($"[{DateTime.Now}] {message}");
+                    writer.WriteLine(ex.ToString());
+                    writer.WriteLine("----------------------------------------------");
+                }
+            }
+            catch
+            {
+                // Fallback incase logging fails. Avoid throwing further exceptions here.
+            }
+        }
+        private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception ex)
+            {
+                LogException("Unhandled exception caught", ex);
+            }
+        }
+
         public Main()
         {
             LoadSettings();
             Tick += OnTick;
+            AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
         }
-        void LoadSettings()
+        private void LoadSettings()
         {
             try
             {
@@ -121,7 +145,7 @@ namespace SlowMoEvents
                 Screen.ShowSubtitle($"~r~RegularMo Error: {ex.Message}", 1500);
             }
         }
-        static void Wait(int time, bool instant)
+        private static void Wait(int time, bool instant)
         {
             try
             {
@@ -152,7 +176,7 @@ namespace SlowMoEvents
             }
         }
 
-        void OnTick(object sender, EventArgs e)
+        private void OnTick(object sender, EventArgs e)
         {
             try
             {
