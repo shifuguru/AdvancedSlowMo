@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GTA;
+using GTA.UI;
+using Screen = GTA.UI.Screen;
 using GTA.Native;
 
 namespace SlowMoEvents
@@ -28,102 +30,137 @@ namespace SlowMoEvents
         static float transition;
         public Main()
         {
-            loadSettings();
-            Tick += onTick;
+            LoadSettings();
+            Tick += OnTick;
         }
-        void loadSettings()
+        void LoadSettings()
         {
-            coolDown = Settings.GetValue<int>("SETTINGS", "coolDown", 5000);
-            length = Settings.GetValue<int>("SETTINGS", "length", 110);
-            gameSpeed = Settings.GetValue<float>("SETTINGS", "gameSpeed", 0.1f);
-            if (gameSpeed > 0.9f || gameSpeed < 0.1f)
+            try
             {
-                gameSpeed = 0.1f;
-            }
-            _switch = Settings.GetValue<bool>("SETTINGS", "activeByDefault", true);
-            tog = Settings.GetValue<Keys>("SETTINGS", "toggle", Keys.Insert);
-            tog1 = Settings.GetValue<Keys>("SETTINGS", "instantToggle", Keys.NumPad0);
-            onExp = Settings.GetValue<bool>("TRIGGERS", "onExp", false);
-            onCollision = Settings.GetValue<bool>("TRIGGERS", "onCollision", false);
-            onPedCollision = Settings.GetValue<bool>("TRIGGERS", "onPedCollision", true);
-            onPedRagdoll = Settings.GetValue<bool>("TRIGGERS", "onPedRagdoll", true);
-            transition = Settings.GetValue<float>("SETTINGS", "transition", 0.02f);
-        }
-        public static void slowMo(bool instant)
-        {
-            mod = 1.0f;
-            while (mod >= gameSpeed)
-            {
-                mod += -transition;
-                if(mod < gameSpeed)
+                coolDown = Settings.GetValue<int>("SETTINGS", "coolDown", 5000);
+                length = Settings.GetValue<int>("SETTINGS", "length", 110);
+                gameSpeed = Settings.GetValue<float>("SETTINGS", "gameSpeed", 0.1f);
+                if (gameSpeed > 0.9f || gameSpeed < 0.1f)
                 {
-                    mod = gameSpeed;
-                    Game.TimeScale = mod;
-                    break;
+                    gameSpeed = 0.1f;
                 }
-                Game.TimeScale = mod;
-                //GTA.UI.Screen.ShowSubtitle("mod " + mod, 2000);
-                Wait(10);
+                _switch = Settings.GetValue<bool>("SETTINGS", "activeByDefault", true);
+                tog = Settings.GetValue<Keys>("SETTINGS", "toggle", Keys.Delete);
+                tog1 = Settings.GetValue<Keys>("SETTINGS", "instantToggle", Keys.NumPad0);
+                onExp = Settings.GetValue<bool>("TRIGGERS", "onExp", false);
+                onCollision = Settings.GetValue<bool>("TRIGGERS", "onCollision", false);
+                onPedCollision = Settings.GetValue<bool>("TRIGGERS", "onPedCollision", true);
+                onPedRagdoll = Settings.GetValue<bool>("TRIGGERS", "onPedRagdoll", true);
+                transition = Settings.GetValue<float>("SETTINGS", "transition", 0.02f);
             }
-            //GTA.UI.Screen.ShowSubtitle("MAX SLOW");
-            if (instant)
+            catch (Exception ex)
             {
-                currentTime = Game.GameTime;
-                _wait(currentTime, true);
-            }
-            if (!instant)
-            {
-                currentTime = Game.GameTime;
-                _wait(currentTime, false);
+                Screen.ShowSubtitle($"~r~LoadSettings Error: {ex.Message}", 1500);
             }
         }
-        public static void regularMo()
+        public static void SlowMo(bool instant)
         {
-            mod = gameSpeed;
-            while (mod < 1.0f)
+            try
             {
-                mod += transition;
-                if (mod > 1.0f)
+                mod = 1.0f;
+                int loopLimit = 0;
+                while (mod >= gameSpeed && loopLimit < 100)
                 {
-                    mod = 1.0f;
-                    Game.TimeScale = mod;
-                    break;
-                }
-                Game.TimeScale = mod;
-               // GTA.UI.Screen.ShowSubtitle("mod " + mod, 2000);
-                Wait(10);
-            }
-           // GTA.UI.Screen.ShowSubtitle("REG SPEED");
-        }
-       static void _wait(int time, bool instant)
-        {
-            delay = 0;
-            while (delay <= length)
-            {
-                newTime = Game.GameTime;
-                delay = newTime - time;
-                if (delay >= length)
-                {
-                    regularMo();
-                }
-                Wait(1);
-                if (!instant)
-                {
-                    while (delay < coolDown && delay >= length)
+                    // mod += -transition;
+                    mod -= transition;
+
+                    if (mod < gameSpeed)
                     {
-                        newTime = Game.GameTime;
-                        delay = newTime - time;                        
-                        Wait(1);
+                        mod = gameSpeed;
+                        Game.TimeScale = mod;
+                        break;
+                    }
+                    Game.TimeScale = mod;
+                    // GTA.UI.Screen.ShowSubtitle("mod " + mod, 2000);
+                    Wait(10);
+                }
+                // GTA.UI.Screen.ShowSubtitle("MAX SLOW");
+                if (instant)
+                {
+                    currentTime = Game.GameTime;
+                    Wait(currentTime, true);
+                }
+                else
+                {
+                    currentTime = Game.GameTime;
+                    Wait(currentTime, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Screen.ShowSubtitle($"~r~SlowMo Error: {ex.Message}", 1500);
+            }
+        }
+        public static void RegularMo()
+        {
+            try
+            {
+                mod = gameSpeed;
+                while (mod < 1.0f)
+                {
+                    mod += transition;
+                    if (mod > 1.0f)
+                    {
+                        mod = 1.0f;
+                        Game.TimeScale = mod;
+                        break;
+                    }
+                    Game.TimeScale = mod;
+                    // GTA.UI.Screen.ShowSubtitle("mod " + mod, 2000);
+                    Wait(10);
+                }
+                // GTA.UI.Screen.ShowSubtitle("REG SPEED");
+            }
+            catch (Exception ex)
+            {
+                Screen.ShowSubtitle($"~r~RegularMo Error: {ex.Message}", 1500);
+            }
+        }
+        static void Wait(int time, bool instant)
+        {
+            try
+            {
+                delay = 0;
+                while (delay <= length)
+                {
+                    newTime = Game.GameTime;
+                    delay = newTime - time;
+                    if (delay >= length)
+                    {
+                        RegularMo();
+                    }
+                    Wait(1);
+                    if (!instant)
+                    {
+                        while (delay < coolDown && delay >= length)
+                        {
+                            newTime = Game.GameTime;
+                            delay = newTime - time;
+                            Wait(1);
+                        }
                     }
                 }
             }
-        }
-       
-        void onTick(object sender, EventArgs e)
-        {
-            if (_switch)
+            catch (Exception ex)
             {
+                Screen.ShowSubtitle($"~r~Wait Error: {ex.Message}", 1500);
+            }
+        }
+
+        void OnTick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!_switch) return;
+
                 Ped player = Game.Player.Character;
+                if (player == null) return;
+
                 if (Game.TimeScale == 1.0f)
                 {
                     if (onExp)
@@ -133,7 +170,7 @@ namespace SlowMoEvents
                             {
                                 {
                                     //GTA.UI.Screen.ShowHelpText("EXPLOSION");
-                                    slowMo(false);
+                                    SlowMo(false);
                                 }
                             }
                     }
@@ -142,12 +179,14 @@ namespace SlowMoEvents
                         if (player.IsInVehicle())
                         {
                             Vehicle car = player.CurrentVehicle;
+                            if (car == null) return;
+
                             if (car.Speed > 25)
                             {
                                 if (car.HasCollided)
                                 {
                                     //GTA.UI.Screen.ShowHelpText("COLLISION PLAYER");
-                                    slowMo(false);
+                                    SlowMo(false);
                                 }
                             }
                         }
@@ -155,6 +194,8 @@ namespace SlowMoEvents
                     if (onPedCollision)
                     {
                         var pedVehs = World.GetNearbyVehicles(player, 25f).Where(v => v.Speed > 10 && v.HasCollided).ToList();
+                        // null check here? 
+
                         foreach (Vehicle v in pedVehs)
                         {
                             if (Function.Call<bool>(Hash.IS_ENTITY_ON_SCREEN, v))
@@ -162,14 +203,14 @@ namespace SlowMoEvents
                                 if (!player.IsInVehicle())
                                 {
                                     //GTA.UI.Screen.ShowHelpText("PED COLLISION");
-                                    slowMo(false);
+                                    SlowMo(false);
                                 }
                                 else
                                 {
                                     if (player.IsInVehicle() && !v.IsTouching(player.CurrentVehicle))
                                     {
-                                       // GTA.UI.Screen.ShowHelpText("PED COLLISION");
-                                        slowMo(false);
+                                        // GTA.UI.Screen.ShowHelpText("PED COLLISION");
+                                        SlowMo(false);
                                     }
                                 }
                             }
@@ -183,14 +224,16 @@ namespace SlowMoEvents
                             if (Function.Call<bool>(Hash.IS_ENTITY_ON_SCREEN, ped) && !ped.IsDead)
                             {
                                 // GTA.UI.Screen.ShowHelpText("PED RAGDOLL");
-                                slowMo(false);
+                                SlowMo(false);
                             }
                         }
                     }
-
                 }
             }
-           
+            catch (Exception ex)
+            {
+                Screen.ShowSubtitle($"~r~OnTick Error: {ex.Message}", 1500);
+            }
         }
     }
 }

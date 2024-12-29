@@ -32,7 +32,7 @@ namespace SlowMoEvents
             //Instant slow mo toggle
             if (e.KeyCode == Main.tog1 && Main._switch && Game.TimeScale == 1.0f)
             {
-                Main.slowMo(true);
+                Main.SlowMo(true);
             }
         }
     }
