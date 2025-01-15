@@ -160,7 +160,7 @@ namespace SlowMoEvents
                 // SETTINGS
                 modEnabled = settings.GetValue<bool>("SETTINGS", "Mod Enabled", true);
                 debugEnabled = settings.GetValue<bool>("SETTINGS", "Debug Enabled", false);
-                tog = settings.GetValue<Keys>("SETTINGS", "Toggle", Keys.Delete);
+                tog = settings.GetValue<Keys>("SETTINGS", "Toggle", Keys.End);
                 tog1 = settings.GetValue<Keys>("SETTINGS", "Instant Toggle", Keys.NumPad0);
                 coolDown = settings.GetValue<int>("SETTINGS", "Cool Down", 5000);
                 length = settings.GetValue<int>("SETTINGS", "Length", 110);
@@ -198,7 +198,7 @@ namespace SlowMoEvents
                     // SETTINGS
                     settings.SetValue<bool>("SETTINGS", "Mod Enabled", modEnabled);
                     settings.SetValue<bool>("SETTINGS", "Debug Enabled", debugEnabled);
-                    settings.SetValue<Keys>("SETTINGS", "Toggle", Keys.Delete);
+                    settings.SetValue<Keys>("SETTINGS", "Toggle", Keys.End);
                     settings.SetValue<Keys>("SETTINGS", "Instant Toggle", Keys.NumPad0);
                     settings.SetValue<int>("SETTINGS", "Cool Down", 5000);
                     settings.SetValue<int>("SETTINGS", "Length", 110);
@@ -239,7 +239,7 @@ namespace SlowMoEvents
                     // 
                     writer.WriteLine($"Mod Enabled = {modEnabled}");
                     writer.WriteLine($"Debug Enabled = {debugEnabled}");
-                    writer.WriteLine($"Toggle = " + Keys.Delete);
+                    writer.WriteLine($"Toggle = " + Keys.End);
                     writer.WriteLine($"Instant Toggle = " + Keys.NumPad0);
                     writer.WriteLine($"Cool Down = " + 5000);
                     writer.WriteLine($"Length = " + 110);
